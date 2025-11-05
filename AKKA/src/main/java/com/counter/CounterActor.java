@@ -1,9 +1,9 @@
 package com.counter;
 
-import akka.actor.AbstractActor;
+import akka.actor.AbstractActorWithStash;
 import akka.actor.Props;
 
-public class CounterActor extends AbstractActor {
+public class CounterActor extends AbstractActorWithStash {
 
 	private int counter;
 
