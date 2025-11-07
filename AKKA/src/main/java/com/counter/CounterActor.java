@@ -27,11 +27,17 @@ public class CounterActor extends AbstractActorWithStash {
 	void onIncrement(Increment msg) {
 		++counter;
 		System.out.println("Counter increased to " + counter);
+		unstashAll(); // Unstash all messages when incremented
 	}
 
 	void onDecrement(Decrement msg) {
-		--counter;
-		System.out.println("Counter decreased to " + counter);
+		if (counter == 0) {
+			System.out.println("Counter is zero, stashing decrement");
+			stash(); // Stash the decrement message if counter is zero
+		} else {
+			--counter;
+			System.out.println("Counter decreased to " + counter);
+		}
 	}
 
 	static Props props() {
