@@ -7,7 +7,7 @@ import akka.actor.ActorSystem;
 public class ContactApp {
 
     public static void main(String[] args) throws Exception {
-        final ActorSystem system = ActorSystem.create("contacts-system");
+        /*final ActorSystem system = ActorSystem.create("contacts-system");
         final ActorRef server = system.actorOf(ContactServer.props(), "contactServer");
         final ActorRef client = system.actorOf(ContactClient.props(), "contactClient");
 
@@ -24,6 +24,26 @@ public class ContactApp {
         Thread.sleep(800);
 
         system.terminate();
-        system.getWhenTerminated().toCompletableFuture().get();
+        system.getWhenTerminated().toCompletableFuture().get();*/
+
+        final ActorSystem system = ActorSystem.create("App");
+        final ActorRef client = system.actorOf(ContactClient.props(), "Client");
+
+        final ActorRef resumeSup = system.actorOf(ContactSupervisor.propsResume(), "resumeSupervisor");
+        resumeSup.tell(new PutMsg("Alice", "alice@example.com"), ActorRef.noSender());
+        resumeSup.tell(new PutMsg("Fail!", "boom@example.com"), ActorRef.noSender());
+        Thread.sleep(200);
+        resumeSup.tell(new GetMsg("Alice"), client);
+
+        Thread.sleep(400);
+
+        final ActorRef restartSup = system.actorOf(ContactSupervisor.propsRestart(), "restartSupervisor");
+        restartSup.tell(new PutMsg("Bob", "bob@example.com"), ActorRef.noSender());
+        restartSup.tell(new PutMsg("Fail!", "boom@example.com"), ActorRef.noSender());
+        Thread.sleep(200);
+        restartSup.tell(new GetMsg("Bob"), client); 
+
+        Thread.sleep(800);
+        system.terminate();
     }
 }
