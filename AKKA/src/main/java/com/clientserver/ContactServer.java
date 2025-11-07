@@ -23,13 +23,11 @@ public class ContactServer extends AbstractActor {
     }
 
     void onPutMsg(PutMsg msg) {
-        System.out.println("Storing contact: " + msg.name + " -> " + msg.email);
         contacts.put(msg.name, msg.email);
     }
 
     void onGetMsg(GetMsg msg) {
         String email = contacts.get(msg.name);
-        System.out.println("Retrieving contact: " + msg.name + " -> " + email);
         getSender().tell(new GetResponse(msg.name, java.util.Optional.ofNullable(email)), getSelf());
         }
 
